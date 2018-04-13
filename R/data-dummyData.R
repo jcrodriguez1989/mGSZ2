@@ -1,0 +1,34 @@
+#' Dummy data to execute mGSZ example
+#'
+#' @description Data generated in mGSZ example as follows:
+#' gene.names <- paste("g",1:100, sep = "")
+#'
+#' # create random gene expression data matrix
+#'
+#' set.seed(100)
+#' x <- matrix(rnorm(100*10),ncol=10)
+#' rownames(x) <- gene.names
+#' b <- matrix(2*rnorm(50),ncol=5)
+#' ind <- sample(1:10,replace=FALSE)
+#' x[ind,6:10] <- x[ind,6:10] + b
+#'
+#' l <- rep(1:2,c(5,5))
+#'
+#' # create random gene sets
+#'
+#' y <- vector("list", 20)
+#' for(i in 1:length(y)){
+#'     y[[i]] <- sample(gene.names, size = 10)
+#' }
+#' names(y) <- paste("set", as.character(1:20), sep="")
+#'
+#' dummyData <- list(x=x, y=y, l=l)
+#'
+#' # can be used by doing:
+#' mGSZres <- mGSZ2(dummyData$x, dummyData$y, dummyData$l);
+#'
+#' @name dummyData
+#' @docType data
+#' @usage data(dummyData)
+#'
+NULL
