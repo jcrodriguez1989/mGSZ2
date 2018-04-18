@@ -17,9 +17,9 @@ filterInputs <- function(exprData, gSets, minGsetSize) {
 #' @include rankFunctions.R
 # classes=l
 getRankings <- function(exprData, classes, nPerm, rankFn) {
-    if (rankFn == 'MA') {
+    if (is.character(rankFn) && rankFn == 'MA') {
         rankFn <- mGszEbayes;
-    } else if (rankFn == 'RNA') {
+    } else if (is.character(rankFn) && rankFn == 'RNA') {
         stop('Not developed yet');
         # rankFn <-
     } else if (!is.function(rankFn)) {
