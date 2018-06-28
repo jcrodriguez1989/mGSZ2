@@ -16,7 +16,7 @@ filterInputs <- function(exprData, gSets, minGsetSize) {
 #' @importFrom BiocParallel bpparam bplapply
 #' @include rankFunctions.R
 # classes=l
-getRankings <- function(exprData, classes, nPerm, rankFn) {
+getRankings <- function(exprData, classes, nPerm, rankFn, rankInParallel) {
     if (is.character(rankFn) && rankFn == 'MA') {
         rankFn <- mGszEbayes;
     } else if (is.character(rankFn) && rankFn == 'RNA') {
@@ -41,13 +41,18 @@ getRankings <- function(exprData, classes, nPerm, rankFn) {
     # gene scores for real data
     rankings[,1] <- rankFn(exprData, classes);
 
-    print(paste("Getting ranking at cores:", bpparam()$workers));
-
     # gene scores for permuted data
     # I am passing MIGSA's not exported functions to bplapply to avoid
     # SnowParam environment errors
+    if (rankInParallel) {
+        whichLapply <- bplapply;
+        print(paste("Getting ranking at cores:", bpparam()$workers));
+    } else {
+        whichLapply <- lapply;
+    }
+    
     rankings[,-1] <- do.call(cbind,
-        bplapply(seq_len(nPerm), function(i) {
+        whichLapply(seq_len(nPerm), function(i) {
             actRank <- rankFn(exprData, classes[perms[i,]]);
             return(actRank);
         }));

@@ -27,6 +27,8 @@
 #' 0.3 and 0.5 are expected to be reasonable
 #' @param vc Size of the reference class used with wgt1. Default is 10
 #' @param p Number of permutations for p-value calculation
+#' @rankInParallel If FALSE, permutation gene rankings will be calculated
+#' sequentially. Useful if rankFn is provided and is already parallelized.
 #'
 #' @details A function for Gene set analysis based on Gene Set Z-scoring
 #' function and asymptotic p- value. It differs from GSZ (Toronen et al 2009)
@@ -56,7 +58,7 @@
 
 # rankFn='MA'; min.sz=5; pv=0; w1=0.2; w2=0.5; vc=10; p=200
 mGSZ2 <- function(x, y, l, rankFn='MA', min.sz=5, pv=0, w1=0.2, w2=0.5, vc=10,
-                 p=200) {
+                 p=200, rankInParallel=!F) {
     if (length(unique(l)) != 2)
         stop('l must have exactly two different categories.');
     if (length(l) != ncol(x))
@@ -74,7 +76,7 @@ mGSZ2 <- function(x, y, l, rankFn='MA', min.sz=5, pv=0, w1=0.2, w2=0.5, vc=10,
     wgt2 <- w2;
     varConstant <- vc;
 
-    rankings <- getRankings(exprData, l, nPerm, rankFn);
+    rankings <- getRankings(exprData, l, nPerm, rankFn, rankInParallel);
     if (any(is.na(rankings) | is.infinite(rankings))) {
         rankings[is.infinite(rankings)] <- NA;
         warning(paste('Ranking function returned', sum(is.na(rankings)),
