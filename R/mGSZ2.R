@@ -77,10 +77,9 @@ mGSZ2 <- function(x, y, l, rankFn='MA', min.sz=5, pv=0, w1=0.2, w2=0.5, vc=10,
     rankings <- getRankings(exprData, l, nPerm, rankFn);
     if (any(is.na(rankings) | is.infinite(rankings))) {
         rankings[is.infinite(rankings)] <- NA;
-        warning(paste('Ranking function returned', 
-            sum(any(is.na(rankings))),
+        warning(paste('Ranking function returned', sum(is.na(rankings)),
             'non-finite values'));
-            
+        
         rankings <- t(apply(rankings, 1, function(x) {
             x[is.na(x)] <- mean(x, na.rm=!F);
             return(x);
