@@ -2,14 +2,15 @@ Package: mGSZ2
 Type: Package
 Title: What the Package Does (Title Case)
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
+Author: Juan Cruz Rodriguez
+Maintainer: Juan Cruz Rodriguez <jcrodriguez@bdmg.com.ar>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: GPL (>= 2)
 Imports:
     BiocParallel,
     compiler,
+    futile.logger,
     ismev,
     limma,
     matrixStats,
@@ -19,9 +20,9 @@ Suggests:
     testthat
 Encoding: UTF-8
 LazyData: true
-Collate: 
+Collate:
     'rankFunctions.R'
     'auxFuns.R'
     'data-dummyData.R'
     'mGSZ2.R'
-RoxygenNote: 5.0.1.9000
+RoxygenNote: 5.0.1

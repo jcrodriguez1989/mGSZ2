@@ -27,7 +27,7 @@
 #' 0.3 and 0.5 are expected to be reasonable
 #' @param vc Size of the reference class used with wgt1. Default is 10
 #' @param p Number of permutations for p-value calculation
-#' @rankInParallel If FALSE, permutation gene rankings will be calculated
+#' @param rankInParallel If FALSE, permutation gene rankings will be calculated
 #' sequentially. Useful if rankFn is provided and is already parallelized.
 #'
 #' @details A function for Gene set analysis based on Gene Set Z-scoring
@@ -53,6 +53,7 @@
 #' Juan Cruz Rodriguez \email{jcrodriguez@@bdmg.com.ar}
 #'
 #' @importFrom BiocParallel bplapply
+#' @importFrom futile.logger flog.info
 #' @include auxFuns.R
 #'
 
@@ -76,12 +77,13 @@ mGSZ2 <- function(x, y, l, rankFn='MA', min.sz=5, pv=0, w1=0.2, w2=0.5, vc=10,
     wgt2 <- w2;
     varConstant <- vc;
 
+    flog.info("Getting rankings.");
     rankings <- getRankings(exprData, l, nPerm, rankFn, rankInParallel);
     if (any(is.na(rankings) | is.infinite(rankings))) {
         rankings[is.infinite(rankings)] <- NA;
         warning(paste('Ranking function returned', sum(is.na(rankings)),
             'non-finite values'));
-        
+
         rankings <- t(apply(rankings, 1, function(x) {
             x[is.na(x)] <- mean(x, na.rm=!F);
             return(x);
@@ -113,6 +115,7 @@ mGSZ2 <- function(x, y, l, rankFn='MA', min.sz=5, pv=0, w1=0.2, w2=0.5, vc=10,
     zVars_dec <- zVarCalc(sVMC_dec$Z_vars, wgt2, varConstant);
     zVars_inc <- zVarCalc(sVMC_inc$Z_vars, wgt2, varConstant);
 
+    flog.info("Getting enrichment scores.");
     enrichScores <- do.call(c, bplapply(uniqSizes, function(actSize) {
         actGsets <- gSets[setSizes == actSize];
         actSize_c <- as.character(actSize);
@@ -152,6 +155,7 @@ mGSZ2 <- function(x, y, l, rankFn='MA', min.sz=5, pv=0, w1=0.2, w2=0.5, vc=10,
 
     permESs <- do.call(cbind, bplapply(seq_len(ncol(rankings)-1)+1,
         function(i) {
+            flog.info(paste0('Getting ESs for perm: ', i));
             ranking <- rankings[,i];
             ranking <- sort(ranking, decreasing=!FALSE);
             sVMC_dec <- sumVarMeanCalc(ranking, preVar, normFactors);

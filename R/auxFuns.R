@@ -5,24 +5,32 @@ filterInputs <- function(exprData, gSets, minGsetSize) {
     geneSetsGenes <- do.call(c, gSets);
     commonGenes <- intersect(exprDataGenes, geneSetsGenes);
 
+    flog.info(paste("Genes removed from expression matrix:", length(exprDataGenes)-length(commonGenes)));
     exprData <- exprData[commonGenes,];
+    flog.info(paste("Genes removed from gene sets:", length(geneSetsGenes)-length(commonGenes)));
     gSets <- lapply(gSets, intersect, commonGenes);
 
     # remove gene sets with less than minSz genes (detected in the experiment)
-    gSets <- gSets[lapply(gSets, length) > minGsetSize];
+    keepGsets <- unlist(lapply(gSets, length) > minGsetSize);
+    gSets <- gSets[keepGsets];
+    flog.info(paste("Gene sets removed by min size:", sum(!keepGsets), ', kept:', length(gSets)));
     return(list(exprData=exprData, gSets=gSets));
 }
 
 #' @importFrom BiocParallel bpparam bplapply
+#' @importFrom futile.logger flog.info
 #' @include rankFunctions.R
 # classes=l
 getRankings <- function(exprData, classes, nPerm, rankFn, rankInParallel) {
     if (is.character(rankFn) && rankFn == 'MA') {
+        flog.info('ebayes rank selected.');
         rankFn <- mGszEbayes;
     } else if (is.character(rankFn) && rankFn == 'RNA') {
+        flog.info('Voom rank selected.');
         stop('Not developed yet');
         # rankFn <-
     } else if (!is.function(rankFn)) {
+        flog.info('Custon ranking function provided.');
         stop('rankFn must be one of "MA", "RNA", or an R function');
     } ## todo: add the possibility of having a matrix with the perms
 
@@ -35,7 +43,7 @@ getRankings <- function(exprData, classes, nPerm, rankFn, rankInParallel) {
     rm(permsConds);
 
     nPerm <- nrow(perms);
-    print(paste("Number of unique permutations:", nPerm));
+    flog.info(paste("Number of unique permutations:", nPerm));
 
     rankings <- matrix(0, nrow=nrow(exprData), ncol=nPerm+1);
     # gene scores for real data
@@ -46,19 +54,22 @@ getRankings <- function(exprData, classes, nPerm, rankFn, rankInParallel) {
     # SnowParam environment errors
     if (rankInParallel) {
         whichLapply <- bplapply;
-        print(paste("Getting ranking at cores:", bpparam()$workers));
+        flog.info(paste("Getting ranking at cores:", bpparam()$workers));
     } else {
         whichLapply <- lapply;
+        flog.info(paste("Getting ranking at cores:", 1));
     }
-    
-    rankings[,-1] <- do.call(cbind,
-        whichLapply(seq_len(nPerm), function(i) {
-            actRank <- rankFn(exprData, classes[perms[i,]]);
-            return(actRank);
-        }));
+
+    rankList <- whichLapply(seq_len(nPerm), function(i) {
+        flog.info(paste0('Getting rank for perm: ', i));
+        actRank <- rankFn(exprData, classes[perms[i,]]);
+        return(actRank);
+    });
+    rankings[,-1] <- do.call(cbind, rankList);
 
     ## todo: maybe the best alternative would be delete the gene from
     # everywhere
+    flog.info(paste("Percentage of NA in ranking:", sum(is.na(rankings))/length(rankings)));
     rankings[is.na(rankings)] <- mean(rankings, na.rm=TRUE);
     # genes which are NA are given the mean value of all genes,
     # so they dont contribute to enrichment score.

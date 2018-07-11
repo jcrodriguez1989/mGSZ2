@@ -5,7 +5,7 @@
 \title{mGSZ2: Improved Modified Gene Set Z-score method for gene set analysis.}
 \usage{
 mGSZ2(x, y, l, rankFn = "MA", min.sz = 5, pv = 0, w1 = 0.2, w2 = 0.5,
-  vc = 10, p = 200)
+  vc = 10, p = 200, rankInParallel = !F)
 }
 \arguments{
 \item{x}{Gene expression data matrix (rows as genes and columns as samples)}
@@ -36,6 +36,9 @@ penalizes small subsets from the gene list. Default is 0.5. Values around
 \item{vc}{Size of the reference class used with wgt1. Default is 10}
 
 \item{p}{Number of permutations for p-value calculation}
+
+\item{rankInParallel}{If FALSE, permutation gene rankings will be calculated
+sequentially. Useful if rankFn is provided and is already parallelized.}
 }
 \value{
 Dataframe with gene sets (in decreasing order based on the
