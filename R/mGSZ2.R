@@ -12,8 +12,11 @@
 #' @param y Gene set data (dataframe/table/matrix/list)
 #' @param l Vector of response values (example:1,2)
 #' @param rankFn One of 'MA', 'RNA' if data comes from microarrays-compatible
-#' or RNA-Seq technologies respectively. Or a function with inputs
-#' (x, l), and returns a vector with the same length as the nrow(x).
+#' or RNA-Seq technologies respectively. Or a function with inputs (x, l), and 
+#' returns a vector with the same length as the nrow(x).  Or a matrix of
+#' rankings genes as rows (must have genes as rownames), first column for real
+#' ranking, rest of columns for permuted rankings, in this case mGSZ2 will not
+#' use x and l inputs (can be NA).
 #' @param min.sz Minimum size of gene sets (number of genes in a gene set) to
 #' be included in the analysis
 #' @param pv Estimate of the variance associated with each observation
@@ -57,13 +60,17 @@
 #' @include auxFuns.R
 #'
 
-# rankFn='MA'; min.sz=5; pv=0; w1=0.2; w2=0.5; vc=10; p=200
+# rankFn='MA'; min.sz=5; pv=0; w1=0.2; w2=0.5; vc=10; p=200; rankInParallel=F;
 mGSZ2 <- function(x, y, l, rankFn='MA', min.sz=5, pv=0, w1=0.2, w2=0.5, vc=10,
                  p=200, rankInParallel=!F) {
-    if (length(unique(l)) != 2)
+    if (length(unique(l)) != 2 && !is.matrix(rankFn))
         stop('l must have exactly two different categories.');
-    if (length(l) != ncol(x))
+    if (!is.matrix(rankFn) && length(l) != ncol(x))
         stop('l must have the same length as columns of x.');
+    if (is.matrix(rankFn)) {
+        x <- rankFn;
+        p <- ncol(rankFn)-1;
+    }
 
     # filtering inputs, as required
     filteredInputs <- filterInputs(x, y, min.sz);
@@ -77,8 +84,14 @@ mGSZ2 <- function(x, y, l, rankFn='MA', min.sz=5, pv=0, w1=0.2, w2=0.5, vc=10,
     wgt2 <- w2;
     varConstant <- vc;
 
-    flog.info("Getting rankings.");
-    rankings <- getRankings(exprData, l, nPerm, rankFn, rankInParallel);
+    if (is.matrix(rankFn)) {
+        flog.info("Rankings provided by user.");
+        rankings <- exprData;
+    } else {
+        flog.info("Getting rankings.");
+        rankings <- getRankings(exprData, l, nPerm, rankFn, rankInParallel);
+    }
+    
     if (any(is.na(rankings) | is.infinite(rankings))) {
         rankings[is.infinite(rankings)] <- NA;
         warning(paste('Ranking function returned', sum(is.na(rankings)),

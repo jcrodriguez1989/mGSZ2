@@ -32,7 +32,7 @@ getRankings <- function(exprData, classes, nPerm, rankFn, rankInParallel) {
     } else if (!is.function(rankFn)) {
         flog.info('Custon ranking function provided.');
         stop('rankFn must be one of "MA", "RNA", or an R function');
-    } ## todo: add the possibility of having a matrix with the perms
+    }
 
     # generate permutations
     perms <- replicate(nPerm, sample(1:ncol(exprData), replace=FALSE));
