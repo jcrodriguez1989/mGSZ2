@@ -4,8 +4,8 @@
 \alias{mGSZ2}
 \title{mGSZ2: Improved Modified Gene Set Z-score method for gene set analysis.}
 \usage{
-mGSZ2(x, y, l, rankFn = "MA", min.sz = 5, pv = 0, w1 = 0.2, w2 = 0.5,
-  vc = 10, p = 200, rankInParallel = !F)
+mGSZ2(x, y, l, rankFn = "MA", min.sz = 5, pv = 0, w1 = 0.2,
+  w2 = 0.5, vc = 10, p = 200, rankInParallel = !F)
 }
 \arguments{
 \item{x}{Gene expression data matrix (rows as genes and columns as samples)}
@@ -15,8 +15,11 @@ mGSZ2(x, y, l, rankFn = "MA", min.sz = 5, pv = 0, w1 = 0.2, w2 = 0.5,
 \item{l}{Vector of response values (example:1,2)}
 
 \item{rankFn}{One of 'MA', 'RNA' if data comes from microarrays-compatible
-or RNA-Seq technologies respectively. Or a function with inputs
-(x, l), and returns a vector with the same length as the nrow(x).}
+or RNA-Seq technologies respectively. Or a function with inputs (x, l), and
+returns a vector with the same length as the nrow(x).  Or a matrix of
+rankings genes as rows (must have genes as rownames), first column for real
+ranking, rest of columns for permuted rankings, in this case mGSZ2 will not
+use x and l inputs (can be NA).}
 
 \item{min.sz}{Minimum size of gene sets (number of genes in a gene set) to
 be included in the analysis}
@@ -69,4 +72,3 @@ mGSZres <- mGSZ2(dummyData$x, dummyData$y, dummyData$l);
 \author{
 Juan Cruz Rodriguez \email{jcrodriguez@bdmg.com.ar}
 }
-

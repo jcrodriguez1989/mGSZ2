@@ -12,7 +12,7 @@
 #' @param y Gene set data (dataframe/table/matrix/list)
 #' @param l Vector of response values (example:1,2)
 #' @param rankFn One of 'MA', 'RNA' if data comes from microarrays-compatible
-#' or RNA-Seq technologies respectively. Or a function with inputs (x, l), and 
+#' or RNA-Seq technologies respectively. Or a function with inputs (x, l), and
 #' returns a vector with the same length as the nrow(x).  Or a matrix of
 #' rankings genes as rows (must have genes as rownames), first column for real
 #' ranking, rest of columns for permuted rankings, in this case mGSZ2 will not
@@ -76,7 +76,7 @@ mGSZ2 <- function(x, y, l, rankFn='MA', min.sz=5, pv=0, w1=0.2, w2=0.5, vc=10,
     filteredInputs <- filterInputs(x, y, min.sz);
     exprData <- filteredInputs$exprData;
     gSets <- filteredInputs$gSets;
-    rm(filteredInputs);
+    rm(filteredInputs); rm(x); rm(y);
 
     # get gene rankings (also for permuted data)
     nPerm <- p;
@@ -91,7 +91,7 @@ mGSZ2 <- function(x, y, l, rankFn='MA', min.sz=5, pv=0, w1=0.2, w2=0.5, vc=10,
         flog.info("Getting rankings.");
         rankings <- getRankings(exprData, l, nPerm, rankFn, rankInParallel);
     }
-    
+
     if (any(is.na(rankings) | is.infinite(rankings))) {
         rankings[is.infinite(rankings)] <- NA;
         warning(paste('Ranking function returned', sum(is.na(rankings)),
@@ -154,7 +154,7 @@ mGSZ2 <- function(x, y, l, rankFn='MA', min.sz=5, pv=0, w1=0.2, w2=0.5, vc=10,
             impGenes <- intersect(impGenes, actGset);
             actES <- abs(rawES);
 
-            return(list(actES=actES, rawES=rawES, impGenes=impGenes));
+            return(list(actES=actES, rawES=rawES, impGenes=impGenes, ESs=diffScores));
         });
         names(actESs) <- names(actGsets);
         return(actESs);
@@ -165,10 +165,12 @@ mGSZ2 <- function(x, y, l, rankFn='MA', min.sz=5, pv=0, w1=0.2, w2=0.5, vc=10,
     rawESs <- do.call(c, lapply(enrichScores, function(x) x$rawES));
     impGenes <- do.call(c, lapply(enrichScores, function(x)
                             paste(x$impGenes, collapse=', ')));
+    ESmatrix <- do.call(rbind, lapply(enrichScores, function(x) x$ESs));
+    stopifnot(all(c(names(realRank), rev(names(realRank))) == colnames(ESmatrix)));
 
     permESs <- do.call(cbind, bplapply(seq_len(ncol(rankings)-1)+1,
         function(i) {
-            flog.info(paste0('Getting ESs for perm: ', i));
+            flog.info(paste0('Getting ESs for perm: ', i-1));
             ranking <- rankings[,i];
             ranking <- sort(ranking, decreasing=!FALSE);
             sVMC_dec <- sumVarMeanCalc(ranking, preVar, normFactors);
@@ -216,6 +218,9 @@ mGSZ2 <- function(x, y, l, rankFn='MA', min.sz=5, pv=0, w1=0.2, w2=0.5, vc=10,
     result <- data.frame(gene.sets=names(pvals), pvalue=pvals,
                          mGszScore=rawESs, impGenes=impGenes);
     result <- result[order(pvals),];
+    attr(result, 'GenesRanking') <- realRank;
+    attr(result, 'ESs') <- ESmatrix;
+    attr(result, 'GSs') <- gSets;
 
     return(result);
 }

@@ -10,10 +10,18 @@ License: GPL (>= 2)
 Imports:
     BiocParallel,
     compiler,
+    DT,
     futile.logger,
+    ggplot2,
+    GO.db,
     ismev,
+    KEGG.db,
     limma,
     matrixStats,
+    org.Hs.eg.db,
+    plotly,
+    reshape2,
+    shiny,
     stats
 Suggests:
     mGSZ,
@@ -24,5 +32,7 @@ Collate:
     'rankFunctions.R'
     'auxFuns.R'
     'data-dummyData.R'
+    'enrichmentPlot.R'
     'mGSZ2.R'
-RoxygenNote: 5.0.1
+    'startMGSZ2.R'
+RoxygenNote: 6.1.0

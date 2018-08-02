@@ -35,4 +35,3 @@ dummyData <- list(x=x, y=y, l=l)
 # can be used by doing:
 mGSZres <- mGSZ2(dummyData$x, dummyData$y, dummyData$l);
 }
-
