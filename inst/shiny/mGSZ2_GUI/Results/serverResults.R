@@ -1,16 +1,24 @@
 renderMgszRes <- function(mGszRes) {
     if (is.null(mGszRes))
         return(mGszRes);
+
     gsets <- attr(mGszRes,'GSs');
+    gsetNames <- attr(gsets, 'GeneSetNames');
     gsetSsz <- unlist(lapply(gsets, length));
-    res <- mGszRes[, c('mGszScore', 'pvalue')];
+    res <- mGszRes[, c('gene.sets', 'mGszScore', 'pvalue')];
+
+    aux <- as.character(res$gene.sets);
+    actNames <- gsetNames[aux];
+    aux[!is.na(actNames)] <- actNames[!is.na(actNames)];
+    res$gene.sets <- aux;
+
     res <- data.frame(res);
-    colnames(res) <- c('ES', 'P-value');
+    colnames(res) <- c('Name', 'ES', 'P-value');
+    rownames(res) <- mGszRes$gene.sets;
     res$FDR <- p.adjust(res[,'P-value'], method='fdr');
     res[,'#leading edge'] <- unlist(lapply(mGszRes$impGenes, function(x)
         length(strsplit(as.character(x), ', ')[[1]])));
     res[,'#genes'] <- gsetSsz[rownames(res)];
-
 
     return(res);
 }

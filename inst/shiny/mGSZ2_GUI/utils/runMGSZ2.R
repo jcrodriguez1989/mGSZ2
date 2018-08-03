@@ -1,9 +1,13 @@
-runMGSZ2 <- function(exprMatrix, classes, input, session) {
+library('mGSZ2');
+
+runMGSZ2 <- function(exprMatrix, classes, ownGsets, input, session) {
     selGsets <- input$gsetsSelection;
 
     progress <- Progress$new(session);
     progress$set(message='Loading gene sets.', detail='');
-    gsets <- loadGsets(selGsets); # load selected gene sets
+
+    inSymbol <- input$geneSymbol;
+    gsets <- loadGsets(selGsets, ownGsets, inSymbol); # load selected gene sets
 
     actCtrst <- input$selectedCtrst;
     actCtrst <- strsplit(actCtrst, ' -vs- ')[[1]];

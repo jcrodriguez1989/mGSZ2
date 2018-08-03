@@ -76,6 +76,7 @@ mGSZ2 <- function(x, y, l, rankFn='MA', min.sz=5, pv=0, w1=0.2, w2=0.5, vc=10,
     filteredInputs <- filterInputs(x, y, min.sz);
     exprData <- filteredInputs$exprData;
     gSets <- filteredInputs$gSets;
+    attr(gSets, 'GeneSetNames') <- attr(y, 'GeneSetNames'); # if y has this attribute then keep it
     rm(filteredInputs); rm(x); rm(y);
 
     # get gene rankings (also for permuted data)

@@ -8,20 +8,26 @@ inputDataUi <- function() {
              fluidRow(column(2, actionButton(inputId='runMgszbtn', label='RUN mGSZ2!!'))),
              br(),
              wellPanel(fluidRow(
-                 column(4, numericInput('nPerm', label='Number of permutations', value=200, min=1, step=1)),
-                 column(6, selectInput(inputId='gsetsSelection', label='Selected gene sets', multiple=!FALSE,
+                 column(2, numericInput('nPerm', label='Number of permutations', value=200, min=1, step=1)),
+                 column(5, selectInput(inputId='gsetsSelection', label='Selected gene sets', multiple=!FALSE,
                                         choices=gsetsLib(), selected=gsetsLib())
-                            # todo: upload gset file
+                 ),
+                 column(5, fileInput(inputId='gmtFile', label='Load gene set file (.gmt)',
+                                     accept=c('.gmt'))
                  )
              )),
              wellPanel(
                  fluidRow(
                      column(7, fileInput(inputId='inputFile', label='Load expression matrix',
-                                         accept=c('.xls', '.xlsx', '.csv', '.tsv'))),
+                                         accept=c('application/vnd.ms-excel', # xls
+                                                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', # xlsx
+                                                  'text/csv', # csx
+                                                  'text/tab-separated-values') # tsv
+                                         )),
                      column(2,
                             checkboxInput(inputId='rnaSeqData', label='RNA-Seq data', value=FALSE),
                             checkboxInput(inputId='printboxplot', label='Show boxplot', value=!FALSE)),
-                     column(3, disabled(actionButton(inputId='symb2entrezbtn', label='Symbol2Entrez')))
+                     column(3, checkboxInput(inputId='geneSymbol', label='Using gene symbol (if not, Entrez)'))
                  ),
                  fluidRow(
                      column(9, textInput(inputId='condsInput', label='Conditions', width='100%',

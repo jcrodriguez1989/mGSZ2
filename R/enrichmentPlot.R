@@ -28,11 +28,15 @@
 #'
 
 enrichmentPlot <- function(mGSZres, geneSetId) {
-    gSet <- attr(mGSZres, 'GSs')[[geneSetId]];
-
-    if (is.null(gSet))
+    if (!geneSetId %in% rownames(mGSZres))
         stop('geneSetId not in mGSZres.');
 
+    gSets <- attr(mGSZres, 'GSs');
+    gSet <- gSets[[geneSetId]];
+    gSetNames <- attr(gSets, 'GeneSetNames');
+    gSetName <- geneSetId;
+    if (gSetName %in% names(gSetNames))
+        gSetName <- gSetNames[[gSetName]];
     EScore <- attr(mGSZres, 'ESs')[geneSetId,, drop=F];
     if (which.max(abs(EScore)) > ncol(EScore)/2) {
         EScore <- EScore[,((ncol(EScore)/2)+1):ncol(EScore), drop=F];
@@ -80,10 +84,10 @@ enrichmentPlot <- function(mGSZres, geneSetId) {
                               x=ESpoint, xend=0,
                               linetype='dashed', size=0.1);
     ggp <- ggp + geom_hline(yintercept=0, alpha=.25); # zero x line
-    ggp <- ggp + ggtitle(paste('Enrichment plot:', geneSetId));
+    ggp <- ggp + ggtitle(paste('Enrichment plot:', gSetName));
     ggp <- ggp + ylab('Enrichment score (ES)');
     ggp <- ggp + labs(color='Gene rank');
-    ggp <- ggp + labs(alpha='In gene set');
+    ggp <- ggp + labs(size='In gene set');
     ggp <- ggp + theme(legend.position='bottom');
 
     return(ggp);
