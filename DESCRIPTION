@@ -20,6 +20,7 @@ Imports:
     matrixStats,
     org.Hs.eg.db,
     plotly,
+    readxl,
     reshape2,
     shiny,
     stats

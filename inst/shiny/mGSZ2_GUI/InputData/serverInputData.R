@@ -1,4 +1,5 @@
 library('limma');
+library('readxl');
 
 exprMatrixServer <- function(input) {
     infile <- input$inputFile;
@@ -29,7 +30,7 @@ exprMatrixServer <- function(input) {
             showNotification('Duplicated genes detected, replacing by mean value.', type='warning');
             mtrx <- as.data.frame(avereps(mtrx, ID=ids));
         } else {
-            rownames(mtrx) <- mtrx[,1];
+            rownames(mtrx) <- ids;
         }
     }
 

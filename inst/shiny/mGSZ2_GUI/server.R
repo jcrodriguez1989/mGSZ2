@@ -9,6 +9,17 @@ source('utils/runMGSZ2.R');
 options(shiny.maxRequestSize=50*1024^2); # upload file top of 50MB
 
 shinyServer(function(input, output, session) {
+
+    ############## Help
+
+    # set help content
+    session$sendCustomMessage(type = 'setHelpContent', message = list(steps = toJSON(steps) ))
+
+    observeEvent(input$startHelp, {
+        # on click, send custom message to start help
+        session$sendCustomMessage(type = 'startHelp', message = list(""))
+    })
+
     ############## Input Data
 
     # Loads user gmt files
@@ -86,7 +97,10 @@ shinyServer(function(input, output, session) {
     # Save mGSZ results
     output$saveResbtn <- downloadHandler(
         filename = function() paste0('mGSZ2res_', Sys.Date(), '.RData'),
-        content = function(con) save(mGSZres(), file=con)
+        content = function(con) {
+            toSave <- mGSZres();
+            save(toSave, file=con)
+        }
     )
 
     # Load mGSZ results
