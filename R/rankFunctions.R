@@ -25,7 +25,7 @@ rnaRank <- function(exprData, classes) {
     ##     it is doing -1cond[[1]] + cond[[2]]
     design <- model.matrix(~classes);
     contrast <- c(0, 1);
-    newExpr <- voom(exprMatrix, design);
+    newExpr <- voom(exprData, design);
     fit <- lmFit(newExpr, design);
     # the contrast is the classes difference (0 for intercept, 1 for diff)
     fit <- treat(contrasts.fit(fit, contrast));

@@ -49,8 +49,6 @@ getRankings <- function(exprData, classes, nPerm, rankFn, rankInParallel) {
     rankings[,1] <- rankFn(exprData, classes);
 
     # gene scores for permuted data
-    # I am passing MIGSA's not exported functions to bplapply to avoid
-    # SnowParam environment errors
     if (rankInParallel) {
         whichLapply <- bplapply;
         flog.info(paste("Getting ranking at cores:", bpparam()$workers));
