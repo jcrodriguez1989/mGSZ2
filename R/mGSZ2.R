@@ -8,7 +8,8 @@
 #' \code{mGSZ2} Gene set analysis based on Gene Set Z scoring function and
 #' asymptotic p-value
 #'
-#' @param x Gene expression data matrix (rows as genes and columns as samples)
+#' @param x Gene expression data matrix (rows as genes and columns as samples).
+#' Raw counts for RNA-Seq data.
 #' @param y Gene set data (dataframe/table/matrix/list)
 #' @param l Vector of response values (example:1,2)
 #' @param rankFn One of 'MA', 'RNA' if data comes from microarrays-compatible

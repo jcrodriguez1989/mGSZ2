@@ -24,14 +24,13 @@ filterInputs <- function(exprData, gSets, minGsetSize) {
 getRankings <- function(exprData, classes, nPerm, rankFn, rankInParallel) {
     if (is.character(rankFn) && rankFn == 'MA') {
         flog.info('ebayes rank selected.');
-        rankFn <- mGszEbayes;
+        rankFn <- maRank;
     } else if (is.character(rankFn) && rankFn == 'RNA') {
         flog.info('Voom rank selected.');
-        stop('Not developed yet');
-        # rankFn <-
+        rankFn <- rnaRank;
     } else if (!is.function(rankFn)) {
         flog.info('Custon ranking function provided.');
-        stop('rankFn must be one of "MA", "RNA", or an R function');
+        stop('rankFn must be one of "MA", "RNA", an R function, or a matrix.');
     }
 
     # generate permutations

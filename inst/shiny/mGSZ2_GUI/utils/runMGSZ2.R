@@ -17,8 +17,7 @@ runMGSZ2 <- function(exprMatrix, classes, ownGsets, input, session) {
 
     progress$set(message='Starting mGSZ2 analysis.', detail='');
 
-    # todo: add rankFn
-    rankFn <- mGSZ2:::mGszEbayes;
+    rankFn <- 'MA';
     if (input$rnaSeqData)
         rankFn <- 'RNA';
 

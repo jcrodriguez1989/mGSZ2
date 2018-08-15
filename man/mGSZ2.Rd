@@ -8,7 +8,8 @@ mGSZ2(x, y, l, rankFn = "MA", min.sz = 5, pv = 0, w1 = 0.2,
   w2 = 0.5, vc = 10, p = 200, rankInParallel = !F)
 }
 \arguments{
-\item{x}{Gene expression data matrix (rows as genes and columns as samples)}
+\item{x}{Gene expression data matrix (rows as genes and columns as samples).
+Raw counts for RNA-Seq data.}
 
 \item{y}{Gene set data (dataframe/table/matrix/list)}
 

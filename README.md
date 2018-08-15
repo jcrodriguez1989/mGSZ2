@@ -5,8 +5,11 @@ mGSZ2 is an improved version of the functional analysis [mGSZ R library](https:/
 ### Improvements
 * Runs multicore by implementing the [BiocParallel library](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html).
 * Allows the use of any desired genes ranking function.
+* Has internally implemented the best-evaluated gene ranking method to perform functional analysis of RNA-Seq data.
 * As output it returns the gene set score. Positive or negative depending on enriching condition.
 * As output it returns the genes list that contributed to enrich each gene set, i.e., genes conforming the enrichment score leading edge.
+* Provides a Shiny-based graphical interface by the _startMGSZZ2()_ function.
+* Displays the results of the gene sets by enrichment plots.
 
 ### Installation
 In R console type:
@@ -17,6 +20,9 @@ In R console type:
 
 ### Usage
     R > library('mGSZ2');
+    R >
+    R > # to start the GUI:
+    R > # startMGSZ2();
     R >
     R > # Load example data
     R > data(dummyData); # list that contains 'x', 'y', 'l'.
@@ -33,3 +39,6 @@ In R console type:
     set2       set2 0.12166137  2.124259                              g1, g61, g100, g67
     set1       set1 0.13451610 -1.879446                                    g4, g50, g11
     set7       set7 0.15552483  1.503978                                         g1, g76
+    R >
+    R > # enrichment plot of the set9 gene set
+    R > enrichmentPlot(mGSZres, 'set9');

@@ -36,4 +36,4 @@ Collate:
     'enrichmentPlot.R'
     'mGSZ2.R'
     'startMGSZ2.R'
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.0.9000
