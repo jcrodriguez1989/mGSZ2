@@ -6,7 +6,7 @@ source('Results/serverResults.R');
 source('utils/plots.R');
 source('utils/runMGSZ2.R');
 
-options(shiny.maxRequestSize=50*1024^2); # upload file top of 50MB
+options(shiny.maxRequestSize=1*1024^3); # upload file top of 1GB
 
 shinyServer(function(input, output, session) {
 

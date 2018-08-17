@@ -93,6 +93,7 @@ loadKeggGsets <- function(selGsets, specie='hsa') {
     actKegg <- as.list(actKegg);
     actKegg <- lapply(actKegg, unique); # remove duplicate genes
     keggNames <- unlist(as.list(KEGGPATHID2NAME)[substring(names(actKegg), 4)]);
+    names(keggNames) <- names(actKegg);
     attr(actKegg, 'GeneSetNames') <- keggNames;
     return(actKegg);
 }

@@ -2,7 +2,7 @@
 filterInputs <- function(exprData, gSets, minGsetSize) {
     # keep only genes in exprData and gene sets
     exprDataGenes <- rownames(exprData);
-    geneSetsGenes <- do.call(c, gSets);
+    geneSetsGenes <- unique(do.call(c, gSets));
     commonGenes <- intersect(exprDataGenes, geneSetsGenes);
 
     flog.info(paste("Genes removed from expression matrix:", length(exprDataGenes)-length(commonGenes)));
